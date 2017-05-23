@@ -22,6 +22,10 @@ public class Playa {
 	//connect to server
 	static NetworkClient network = new NetworkClient("localhost", "wumms", getImage());
 	
+	//networkClient.getExpectedNetworkLatencyInMilliseconds();
+    //networkClient.getTimeLimitInSeconds();
+    //networkClient.getMyPlayerNumber();
+	
 	//create playing field
 	static byte[] field = new byte[64];
 	
