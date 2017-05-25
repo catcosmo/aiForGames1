@@ -177,6 +177,7 @@ public class GameField {
 		GameField.player2Chips = player2Chips;
 	}
 
+	//rotate for player 1 (left up) and player 2(right up)
 	public static void turnField(int player) {
 		/*int[][] newArray = new int[49][3];
 		if(player == 1) {
@@ -188,6 +189,12 @@ public class GameField {
 				}
 			}
 		}*/
+	}
+
+	//undo rotation of board
+	public static void undoTurnField(int player) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

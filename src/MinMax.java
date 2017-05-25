@@ -48,17 +48,22 @@ public class MinMax {
 
 	// Einstiegspunkt
 	public void generateMoves() {
+		if (player != 0)
+			GameField.turnField(player);
 		for (int i = 0; i < GameField.getPlayer0Chips().size(); i++) {
+
 			generateSingleMove(GameField.getPlayer0Chips().get(i));
 		}
 		System.out.println(possibleMoveList.size());
 		System.out.println(moveRatingList.size());
+		if (player != 0) {
+			GameField.undoTurnField(player);
+		}
 
 	}
 
 	private void generateSingleMove(int chipPosition) {
-		if (player != 0)
-			GameField.turnField(player);
+
 		if (GameField.getAmtChipsOnField(chipPosition) == 3) {
 			calculateThreeChipMove(chipPosition);
 		}
