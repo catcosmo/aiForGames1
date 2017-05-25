@@ -29,23 +29,21 @@ public class Playa {
 	// networkClient.getMyPlayerNumber();
 
 	// create playing field
-	GameField field = new GameField();
 
 	public static void main(String[] args) {
-
-		MinMax minMax = new MinMax(network.getMyPlayerNumber());
+		GameField.initializeBoard();
+		int player = network.getMyPlayerNumber();
+		MinMax minMax = new MinMax(player);
 		for (;;) {
 			Move receiveMove;
 			Move move = null;
-			int desiredDepth = 4;
-			double score = minMax.minimax(0, 0, true, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-			if (move == null)
-				;
-			else
-				network.sendMove(move);
+			//int desiredDepth = 4;
+			//double score = minMax.minimax(0, 0, true, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 			while ((receiveMove = network.receiveMove()) != null) {
+				GameField.makeMove(receiveMove, player);
 				// Zug in meine Brettrepräsentation einarbeiten
 			}
+			minMax.generateMoves();
 			// berechne tollen Zug
 			// networkClient.sendMove(new Move(abc));
 		}
