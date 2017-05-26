@@ -27,7 +27,7 @@ public class GameField {
 	}
 
 	public static boolean isCellFull(int cellNumber) {
-		if (field[cellNumber][2] != 3) {
+		if (field[cellNumber][2] == 3) {
 			return false;
 		} else
 			return true;
@@ -36,10 +36,10 @@ public class GameField {
 	public static int getAmtChipsOnField(int chipPosition) {
 		int amt = 0;
 		int i = 0;
-		while (field[chipPosition][i] < 3 && i < 3) {
+		while (field[chipPosition][i] < 3) {
 			i++;
 			amt++;
-			if (i == 2)
+			if (i == 3)
 				break;
 		}
 		return amt;
@@ -78,13 +78,13 @@ public class GameField {
 		player0Chips.add(2);
 		player0Chips.add(3);
 
-		player0Chips.add(25);
-		player0Chips.add(37);
-		player0Chips.add(38);
+		player1Chips.add(25);
+		player1Chips.add(37);
+		player1Chips.add(38);
 
-		player0Chips.add(35);
-		player0Chips.add(47);
-		player0Chips.add(46);
+		player2Chips.add(35);
+		player2Chips.add(47);
+		player2Chips.add(46);
 
 		// You need to just change the order of Columns and rows , Yours is printing columns X rows and the solution is printing them rows X columns 
 		for (int rows = 0; rows < field.length; rows++) {
@@ -129,22 +129,22 @@ public class GameField {
 		int y = 0;
 		if (z > 35) {
 			y = 6;
-			x = z % 36;
+			x = z - 36;
 		} else if (z > 24) {
 			y = 5;
-			x = z % 25;
+			x = z - 25;
 		} else if (z > 15) {
 			y = 4;
-			x = z % 16;
+			x = z - 16;
 		} else if (z > 8) {
 			y = 3;
-			x = z % 9;
+			x = z - 9;
 		} else if (z > 3) {
 			y = 2;
-			x = z % 4;
+			x = z - 4;
 		} else if (z > 0) {
 			y = 1;
-			x = z;
+			x = z - 1;
 		}
 		int[] xy = new int[2];
 		xy[0] = x;

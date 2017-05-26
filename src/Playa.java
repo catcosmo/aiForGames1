@@ -43,9 +43,9 @@ public class Playa {
 				GameField.makeMove(receiveMove, player);
 				// Zug in meine Brettrepräsentation einarbeiten
 			}
-			minMax.generateMoves();
+			Move m = minMax.generateMoves();
 			// berechne tollen Zug
-			// networkClient.sendMove(new Move(abc));
+			network.sendMove(m);
 		}
 	}
 }
