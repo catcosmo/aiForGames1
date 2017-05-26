@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import lenz.htw.bogapr.Move;
 
@@ -48,22 +49,32 @@ public class MinMax {
 
 	// Einstiegspunkt
 	public Move generateMoves() {
-		if (player != 0)
-			GameField.turnField(player);
-		for (int i = 0; i < GameField.getPlayer0Chips().size(); i++) {
-
-			generateSingleMove(GameField.getPlayer0Chips().get(i));
-		}
+		//if (player != 0)
+		//	GameField.turnField(player);
+		if (player == 0)
+			for (Iterator<Integer> it = GameField.getPlayer0Chips().iterator(); it.hasNext();) {
+				int i = it.next();
+				generateSingleMove(i);
+			}
+		else if (player == 1)
+			for (Iterator<Integer> it = GameField.getPlayer1Chips().iterator(); it.hasNext();) {
+				int i = it.next();
+				generateSingleMove(i);
+			}
+		else
+			for (Iterator<Integer> it = GameField.getPlayer2Chips().iterator(); it.hasNext();) {
+				int i = it.next();
+				generateSingleMove(i);
+			}
 		System.out.println(possibleMoveList.size());
 		System.out.println(moveRatingList.size());
-		if (player != 0) {
-			GameField.undoTurnField(player);
-		}
+		//if (player != 0) {
+		//	GameField.undoTurnField(player);
+		//}
 		return possibleMoveList.get(0);
 	}
 
 	private void generateSingleMove(int chipPosition) {
-
 		if (GameField.getAmtChipsOnField(chipPosition) == 3) {
 			calculateThreeChipMove(chipPosition);
 		} else if (GameField.getAmtChipsOnField(chipPosition) == 2) {
@@ -76,17 +87,34 @@ public class MinMax {
 		int[] xyPosition = GameField.zToXY(chipPosition);
 		int x = xyPosition[0];
 		int y = xyPosition[1];
-		//x ungerade
-		if (x % 2 != 0) {
-			//if (x > 0)
-			rateMove(chipPosition, chipPosition - 1);
-			//if (chipPosition != 3 && chipPosition != 8 && chipPosition != 15 && chipPosition != 24
-			//	&& chipPosition != 35)
-			rateMove(chipPosition, chipPosition + 1);
-			//x gerade
-		} else {
-			//TODO: Boundaries for 36 + 48
-			rateMove(chipPosition, GameField.xyToPosition(x + 1, y + 1));
+		switch (player) {
+		case 0:
+			//x ungerade
+			if (x % 2 != 0) {
+				rateMove(chipPosition, chipPosition - 1);
+				rateMove(chipPosition, chipPosition + 1);
+				//x gerade
+			} else {
+				//TODO: Boundaries for 36 + 48
+				rateMove(chipPosition, GameField.xyToPosition(x + 1, y + 1));
+			}
+			break;
+		case 1:
+			if (x % 2 == 0) {
+				rateMove(chipPosition, chipPosition + 1);
+			} else {
+				rateMove(chipPosition, chipPosition + 1);
+				rateMove(chipPosition, GameField.xyToPosition(x - 1, y - 1));
+			}
+			break;
+		case 2:
+			if (x % 2 == 0) {
+				rateMove(chipPosition, chipPosition - 1);
+			} else {
+				rateMove(chipPosition, chipPosition - 1);
+				rateMove(chipPosition, GameField.xyToPosition(x - 1, y - 1));
+			}
+			break;
 		}
 
 	}
@@ -95,11 +123,20 @@ public class MinMax {
 		int[] xyPosition = GameField.zToXY(chipPosition);
 		int x = xyPosition[0];
 		int y = xyPosition[1];
-		//TODO: boundaries needed?
-		//if (x > 0)
-		rateMove(chipPosition, GameField.xyToPosition(x, y + 1));
-		//if (chipPosition != 3 && chipPosition != 8 && chipPosition != 15 && chipPosition != 24 && chipPosition != 35)
-		rateMove(chipPosition, GameField.xyToPosition(x + 2, y + 1));
+		switch (player) {
+		case 0:
+			rateMove(chipPosition, GameField.xyToPosition(x, y + 1));
+			rateMove(chipPosition, GameField.xyToPosition(x + 2, y + 1));
+			break;
+		case 1:
+			rateMove(chipPosition, GameField.xyToPosition(x, y - 1));
+			rateMove(chipPosition, GameField.xyToPosition(x + 2, y));
+			break;
+		case 2:
+			rateMove(chipPosition, GameField.xyToPosition(x - 2, y - 1));
+			rateMove(chipPosition, GameField.xyToPosition(x - 2, y));
+			break;
+		}
 
 	}
 
@@ -107,13 +144,37 @@ public class MinMax {
 		int[] xyPosition = GameField.zToXY(chipPosition);
 		int x = xyPosition[0];
 		int y = xyPosition[1];
-		if (x % 2 == 0) {
-			rateMove(chipPosition, GameField.xyToPosition(x + 1, y + 2));
-			rateMove(chipPosition, GameField.xyToPosition(x + 3, y + 2));
-		} else {
-			rateMove(chipPosition, GameField.xyToPosition(x - 1, y + 1));
-			rateMove(chipPosition, GameField.xyToPosition(x + 1, y + 1));
-			rateMove(chipPosition, GameField.xyToPosition(x + 4, y + 1));
+		switch (player) {
+		case 0:
+			if (x % 2 == 0) {
+				rateMove(chipPosition, GameField.xyToPosition(x + 1, y + 2));
+				rateMove(chipPosition, GameField.xyToPosition(x + 3, y + 2));
+			} else {
+				rateMove(chipPosition, GameField.xyToPosition(x - 1, y + 1));
+				rateMove(chipPosition, GameField.xyToPosition(x + 1, y + 1));
+				rateMove(chipPosition, GameField.xyToPosition(x + 4, y + 1));
+			}
+			break;
+		case 1:
+			if (x % 2 == 0) {
+				rateMove(chipPosition, GameField.xyToPosition(x + 1, y - 1));
+				rateMove(chipPosition, GameField.xyToPosition(x + 3, y));
+			} else {
+				rateMove(chipPosition, GameField.xyToPosition(x + 3, y));
+				rateMove(chipPosition, GameField.xyToPosition(x + 1, y - 1));
+				rateMove(chipPosition, GameField.xyToPosition(x - 1, y - 2));
+			}
+			break;
+		case 2:
+			if (x % 2 == 0) {
+				rateMove(chipPosition, GameField.xyToPosition(x - 3, y - 1));
+				rateMove(chipPosition, GameField.xyToPosition(x - 3, y));
+			} else {
+				rateMove(chipPosition, GameField.xyToPosition(x - 3, y));
+				rateMove(chipPosition, GameField.xyToPosition(x - 3, y - 1));
+				rateMove(chipPosition, GameField.xyToPosition(x - 3, y - 2));
+			}
+			break;
 		}
 	}
 
@@ -129,7 +190,7 @@ public class MinMax {
 		} else if (GameField.isCellAttackable(destination, player)) {
 			rating = CHIPHIT;
 		}
-		if (!GameField.isCellFull(destination)) {
+		if (!GameField.isCellFull(destination) && !GameField.isCellOwnChip(destination, player)) {
 			possibleMoveList.add(m);
 			moveRatingList.add(rating);
 		}
@@ -171,6 +232,11 @@ public class MinMax {
 	private double min(double beta, double v) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public void resetMovelist() {
+		possibleMoveList.clear();
+		moveRatingList.clear();
 	}
 
 }

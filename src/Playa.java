@@ -36,14 +36,17 @@ public class Playa {
 		MinMax minMax = new MinMax(player);
 		for (;;) {
 			Move receiveMove;
-			Move move = null;
-			//int desiredDepth = 4;
-			//double score = minMax.minimax(0, 0, true, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+			int turn = 0;
 			while ((receiveMove = network.receiveMove()) != null) {
-				GameField.makeMove(receiveMove, player);
+				System.out.println("Received move: " + receiveMove);
+				GameField.makeMove(receiveMove, turn++);
 				// Zug in meine Brettrepräsentation einarbeiten
 			}
 			Move m = minMax.generateMoves();
+			System.out.println(player + ": " + m);
+			minMax.resetMovelist();
+			//GameField.makeMove(m, player, -1);
 			// berechne tollen Zug
 			network.sendMove(m);
 		}

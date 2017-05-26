@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import lenz.htw.bogapr.Move;
 
@@ -7,10 +8,11 @@ public class GameField {
 	public final int DOWN = 0;
 	public final int MID = 1;
 	public final int UP = 2;
+	public final int FREE = 3;
 
-	private static ArrayList<Integer> player0Chips = new ArrayList<Integer>();
-	private static ArrayList<Integer> player1Chips = new ArrayList<Integer>();
-	private static ArrayList<Integer> player2Chips = new ArrayList<Integer>();
+	private static Set<Integer> player0Chips = new HashSet<Integer>();
+	private static Set<Integer> player1Chips = new HashSet<Integer>();
+	private static Set<Integer> player2Chips = new HashSet<Integer>();
 
 	// 0 = unten, 2 = oben bei [][x]
 	/**
@@ -24,6 +26,13 @@ public class GameField {
 			return true;
 		} else
 			return false;
+	}
+
+	public static boolean isCellOwnChip(int destination, int player) {
+		int topChip = getAmtChipsOnField(destination);
+		if (field[destination][topChip] == player)
+			return true;
+		return false;
 	}
 
 	public static boolean isCellFull(int cellNumber) {
@@ -95,17 +104,24 @@ public class GameField {
 		}
 	}
 
-	public static void makeMove(Move move, int player) {
+	public static void makeMove(Move move, int thePlayer) {
 		int moveFrom = xyToPosition(move.fromX, move.fromY);
 		int moveTo = xyToPosition(move.toX, move.toY);
+		//TODO: Whcih players turn is it?
+		int player = thePlayer;
 		if (field[moveFrom][2] != 3) {
-			field[moveFrom][2] = 0;
+			field[moveFrom][2] = 3;
+			if (field[moveFrom][1] != player)
+				removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
 		} else if (field[moveFrom][1] != 3) {
-			field[moveFrom][1] = 0;
+			field[moveFrom][1] = 3;
+			if (field[moveFrom][1] != player)
+				removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
 		} else {
-			field[moveFrom][0] = 0;
+			field[moveFrom][0] = 3;
+			removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
 		}
 	}
@@ -118,6 +134,7 @@ public class GameField {
 		} else {
 			field[moveTo][0] = player;
 		}
+		addPlayerChip(player, moveTo);
 	}
 
 	public static int xyToPosition(int x, int y) {
@@ -153,48 +170,85 @@ public class GameField {
 
 	}
 
-	public static ArrayList<Integer> getPlayer0Chips() {
+	private static void removePlayerChips(int player, int position) {
+		switch (player) {
+		case 0:
+			player0Chips.remove(position);
+			break;
+		case 1:
+			player1Chips.remove(position);
+			break;
+		case 2:
+			player2Chips.remove(position);
+			break;
+		}
+	}
+
+	private static void addPlayerChip(int player, int position) {
+		switch (player) {
+		case 0:
+			player0Chips.add(position);
+			break;
+		case 1:
+			player1Chips.add(position);
+			break;
+		case 2:
+			player2Chips.add(position);
+			break;
+		}
+	}
+
+	public static Set<Integer> getPlayer0Chips() {
 		return player0Chips;
 	}
 
-	public static void setPlayer0Chips(ArrayList<Integer> player0Chips) {
+	public static void setPlayer0Chips(HashSet<Integer> player0Chips) {
 		GameField.player0Chips = player0Chips;
 	}
 
-	public static ArrayList<Integer> getPlayer1Chips() {
+	public static Set<Integer> getPlayer1Chips() {
 		return player1Chips;
 	}
 
-	public static void setPlayer1Chips(ArrayList<Integer> player1Chips) {
+	public static void setPlayer1Chips(HashSet<Integer> player1Chips) {
 		GameField.player1Chips = player1Chips;
 	}
 
-	public static ArrayList<Integer> getPlayer2Chips() {
+	public static Set<Integer> getPlayer2Chips() {
 		return player2Chips;
 	}
 
-	public static void setPlayer2Chips(ArrayList<Integer> player2Chips) {
+	public static void setPlayer2Chips(HashSet<Integer> player2Chips) {
 		GameField.player2Chips = player2Chips;
 	}
 
 	//rotate for player 1 (left up) and player 2(right up)
-	public static void turnField(int player) {
-		/*int[][] newArray = new int[49][3];
-		if(player == 1) {
+	/*public static void turnField(int player) {
+		int[][] newArray = new int[49][3];
+		if (player == 1) {
 			for (int rows = 0; rows < newArray.length; rows++) {
 				for (int columns = 0; columns < newArray[rows].length; columns++) {
-					
-					newArray[rows][columns] = field[]
-					field[rows][columns] = 3;
+					int[] xy = zToXY(rows);
+					int x = xy[0];
+					int y = xy[1];
+					//int y2 = zToXY(z)
+					newArray[rows][columns] = field[rows - (y * y) - (2 * y + x)][columns];
 				}
 			}
-		}*/
+	
+			for (int rows = 0; rows < newArray.length; rows++) {
+				for (int columns = 0; columns < newArray[rows].length; columns++) {
+					System.out.print(newArray[rows][columns] + "\t");
+				}
+				System.out.println();
+			}
+		}
 	}
-
+	
 	//undo rotation of board
 	public static void undoTurnField(int player) {
 		// TODO Auto-generated method stub
-
-	}
+	
+	}*/
 
 }
