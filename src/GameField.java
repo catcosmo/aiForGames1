@@ -104,22 +104,25 @@ public class GameField {
 		}
 	}
 
-	public static void makeMove(Move move, int thePlayer) {
+	public static void makeMove(Move move) {
 		int moveFrom = xyToPosition(move.fromX, move.fromY);
 		int moveTo = xyToPosition(move.toX, move.toY);
 		//TODO: Whcih players turn is it?
-		int player = thePlayer;
+		int player;
 		if (field[moveFrom][2] != 3) {
+			player = field[moveFrom][2];
 			field[moveFrom][2] = 3;
 			if (field[moveFrom][1] != player)
 				removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
 		} else if (field[moveFrom][1] != 3) {
+			player = field[moveFrom][1];
 			field[moveFrom][1] = 3;
 			if (field[moveFrom][1] != player)
 				removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
 		} else {
+			player = field[moveFrom][0];
 			field[moveFrom][0] = 3;
 			removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
