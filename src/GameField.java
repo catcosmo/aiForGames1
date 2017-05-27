@@ -62,10 +62,15 @@ public class GameField {
 
 	//Zelle ist von Gegner besetzt & man kann auf die Zelle
 	public static boolean isCellAttackable(int destination, int player) {
-		if (!isCellFree(destination) && !isCellFull(destination)
-				&& field[destination][getAmtChipsOnField(destination) - 1] != player) {
-			return true;
-		} else
+		if (!isCellFree(destination))
+			if (!isCellFull(destination))
+				if (field[destination][getAmtChipsOnField(destination) - 1] != player) {
+					return true;
+				} else
+					return false;
+			else
+				return false;
+		else
 			return false;
 
 	}
@@ -129,11 +134,14 @@ public class GameField {
 	}
 
 	private static void moveTo(int moveTo, int player) {
-		if (field[moveTo][0] != 3) {
+		if (field[moveTo][0] == 3) {
 			field[moveTo][0] = player;
-		} else if (field[moveTo][1] != 3) {
+		} else if (field[moveTo][1] == 3) {
+			if (field[moveTo][0] != player)
+				removePlayerChips(field[moveTo][0], moveTo);
 			field[moveTo][1] = player;
 		} else {
+			removePlayerChips(field[moveTo][1], moveTo);
 			field[moveTo][2] = player;
 		}
 		addPlayerChip(player, moveTo);
