@@ -104,11 +104,13 @@ public class GameField {
 		}
 	}
 
-	public static void makeMove(Move move) {
+	public static void makeMove(Move move, int player) {
 		int moveFrom = xyToPosition(move.fromX, move.fromY);
 		int moveTo = xyToPosition(move.toX, move.toY);
 		int player;
 		if (field[moveFrom][2] != 3) {
+		//DONE: Whcih players turn is it?
+		if (field[moveFrom][2] != 3) {  //hier haben wir doch extra die bools oben fuer definiert !cellIsFree etc
 			player = field[moveFrom][2];
 			field[moveFrom][2] = 3;
 			if (field[moveFrom][1] != player)
