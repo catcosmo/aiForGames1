@@ -107,7 +107,6 @@ public class GameField {
 	public static void makeMove(Move move) {
 		int moveFrom = xyToPosition(move.fromX, move.fromY);
 		int moveTo = xyToPosition(move.toX, move.toY);
-		//TODO: Whcih players turn is it?
 		int player;
 		if (field[moveFrom][2] != 3) {
 			player = field[moveFrom][2];
@@ -118,7 +117,7 @@ public class GameField {
 		} else if (field[moveFrom][1] != 3) {
 			player = field[moveFrom][1];
 			field[moveFrom][1] = 3;
-			if (field[moveFrom][1] != player)
+			if (field[moveFrom][0] != player)
 				removePlayerChips(player, moveFrom);
 			moveTo(moveTo, player);
 		} else {
