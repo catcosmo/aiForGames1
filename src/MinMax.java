@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import lenz.htw.bogapr.Move;
 
@@ -68,10 +69,26 @@ public class MinMax {
 			}
 		System.out.println(possibleMoveList.size());
 		System.out.println(moveRatingList.size());
-		//if (player != 0) {
-		//	GameField.undoTurnField(player);
-		//}
-		return possibleMoveList.get(0);
+		return getBestMove();
+
+	}
+
+	private Move getBestMove() {
+		int rating = -1;
+		Move m = null;
+		for (int i = 0; i < possibleMoveList.size(); i++) {
+			if (moveRatingList.get(i) > rating) {
+				rating = moveRatingList.get(i);
+				m = possibleMoveList.get(i);
+			}
+		}
+		if (rating == 0) {
+			Random rn = new Random();
+
+			int randomNum = rn.nextInt((possibleMoveList.size() - 1) - 0 + 1) + 0;
+			m = possibleMoveList.get(randomNum);
+		}
+		return m;
 	}
 
 	private void generateSingleMove(int chipPosition) {
