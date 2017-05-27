@@ -40,7 +40,7 @@ public class Playa {
 			while ((receiveMove = network.receiveMove()) != null) {
 				System.out.println("Received move: " + receiveMove);
 				// Zug in meine Brettrepräsentation einarbeiten
-				GameField.makeMove(receiveMove, player);
+				GameField.makeMove(receiveMove);
 
 			}
 			Move m = minMax.generateMoves();
