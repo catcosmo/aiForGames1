@@ -22,7 +22,7 @@ public class Playa {
 	}
 
 	// connect to server
-	static NetworkClient network = new NetworkClient("localhost", "2", getImage());
+	static NetworkClient network = new NetworkClient("localhost", "#AllesAllen", getImage());
 
 	// networkClient.getExpectedNetworkLatencyInMilliseconds();
 	// networkClient.getTimeLimitInSeconds();
