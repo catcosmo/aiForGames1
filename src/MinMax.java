@@ -58,8 +58,10 @@ public class MinMax {
 
 	public double minimax(int depth, boolean maximizingPlayer) {
 		int estimate = 0;
-		if (depth == 0)// || noMovesLeft
+		if (depth == 0) {// || noMovesLeft {
+			finalMove = allMoves.get(allMoves.size() - 1).get(getBestMoveIndex());
 			return (allRatings.get(allRatings.size() - 1).get(getBestMoveIndex()));
+		}
 		if (maximizingPlayer) {
 			double maxValue = Double.NEGATIVE_INFINITY;
 			generateMoves();
@@ -69,13 +71,13 @@ public class MinMax {
 			allMoves.add(saveMoveList);
 			allRatings.add(saveRatingList);
 			int index = allMoves.size() - 1;
-			for (int i = 0; i < possibleMoveList.size(); i++) {
-				GameField.makeMove(possibleMoveList.get(i));
+			for (int i = 0; i < saveMoveList.size(); i++) {
+				GameField.makeMove(saveMoveList.get(i));
 				resetMovelist();
 				player = (player + 1) % 3;
 				count++;
 				boolean isMax = false;
-				if (count % 2 == 0)
+				if (count % 3 == 0)
 					isMax = true;
 				double value = minimax(depth - 1, isMax);
 				GameField.makeMove(undo(allMoves.get(index).get(i)));
@@ -96,13 +98,13 @@ public class MinMax {
 			allRatings.add(saveRatingList);
 
 			int index = allMoves.size() - 1;
-			for (int i = 0; i < possibleMoveList.size(); i++) {
-				GameField.makeMove(possibleMoveList.get(i));
+			for (int i = 0; i < saveMoveList.size(); i++) {
+				GameField.makeMove(saveMoveList.get(i));
 				resetMovelist();
 				player = (player + 1) % 3;
 				count++;
 				boolean isMax = false;
-				if (count % 2 == 0)
+				if (count % 3 == 0)
 					isMax = true;
 				double value = minimax(depth - 1, isMax);
 				GameField.makeMove(undo(allMoves.get(index).get(i)));
