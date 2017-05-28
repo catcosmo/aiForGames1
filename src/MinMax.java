@@ -8,50 +8,147 @@ public class MinMax {
 
 	private final int CHIPHIT = 1;
 	private final int WALLHIT = 10;
+	private final long timeLimit;
+	private final long tStart;
 
 	private int player;
 	private int MAX = 1000;
 	private int MIN = -1000;
 	private int score;
 
+	private int count = 0;
+
 	private Move tempMove;
 	private Move finalMove;
 	private ArrayList<Move> possibleMoveList = new ArrayList<Move>();
 	private ArrayList<Integer> moveRatingList = new ArrayList<Integer>();
 
-	public MinMax(int i) {
+	private ArrayList<ArrayList<Move>> allMoves = new ArrayList<ArrayList<Move>>();
+	private ArrayList<ArrayList<Integer>> allRatings = new ArrayList<ArrayList<Integer>>();
+
+	public MinMax(int i, long theTimeLimit) {
 		this.player = i;
+		tStart = System.currentTimeMillis();
+		timeLimit = theTimeLimit;
 	}
 
-	public double minimax(int node, int depth, boolean maximizingPlayer, double alpha, double beta) {
-		if (depth == 0 || isTerminating(node))
-			return estimate();
+	/*public Move startMinMax(int node, int depth, boolean maximizingPlayer, double alpha, double beta, long timeLimit) {
+		long tStart = System.currentTimeMillis();
+	
+		while (System.currentTimeMillis() - tStart < 50) {
+			if (player == 0)
+				for (Iterator<Integer> it = GameField.getPlayer0Chips().iterator(); it.hasNext();) {
+					int i = it.next();
+					minimax(i, depth, maximizingPlayer, alpha, beta);
+				}
+			else if (player == 1)
+				for (Iterator<Integer> it = GameField.getPlayer1Chips().iterator(); it.hasNext();) {
+					int i = it.next();
+					minimax(i, depth, maximizingPlayer, alpha, beta);
+				}
+			else
+				for (Iterator<Integer> it = GameField.getPlayer2Chips().iterator(); it.hasNext();) {
+					int i = it.next();
+					minimax(i, depth, maximizingPlayer, alpha, beta);
+				}
+		}
+		return null;
+	
+	}*/
+
+	public double minimax(int depth, boolean maximizingPlayer) {
+		int estimate = 0;
+		if (depth == 0)// || noMovesLeft
+			return (allRatings.get(allRatings.size() - 1).get(getBestMoveIndex()));
+		if (maximizingPlayer) {
+			double maxValue = Double.NEGATIVE_INFINITY;
+			generateMoves();
+			ArrayList<Move> saveMoveList = new ArrayList<Move>(possibleMoveList);
+			ArrayList<Integer> saveRatingList = new ArrayList<Integer>(moveRatingList);
+
+			allMoves.add(saveMoveList);
+			allRatings.add(saveRatingList);
+			int index = allMoves.size() - 1;
+			for (int i = 0; i < possibleMoveList.size(); i++) {
+				GameField.makeMove(possibleMoveList.get(i));
+				resetMovelist();
+				player = (player + 1) % 3;
+				count++;
+				boolean isMax = false;
+				if (count % 2 == 0)
+					isMax = true;
+				double value = minimax(depth - 1, isMax);
+				GameField.makeMove(undo(allMoves.get(index).get(i)));
+				if (value > maxValue) {
+					maxValue = value;
+					if (System.currentTimeMillis() - tStart < timeLimit - 50)
+						finalMove = possibleMoveList.get(i);
+				}
+			}
+			return maxValue;
+		} else {
+			double minValue = Double.POSITIVE_INFINITY;
+			generateMoves();
+			ArrayList<Move> saveMoveList = new ArrayList<Move>(possibleMoveList);
+			ArrayList<Integer> saveRatingList = new ArrayList<Integer>(moveRatingList);
+
+			allMoves.add(saveMoveList);
+			allRatings.add(saveRatingList);
+
+			int index = allMoves.size() - 1;
+			for (int i = 0; i < possibleMoveList.size(); i++) {
+				GameField.makeMove(possibleMoveList.get(i));
+				resetMovelist();
+				player = (player + 1) % 3;
+				count++;
+				boolean isMax = false;
+				if (count % 2 == 0)
+					isMax = true;
+				double value = minimax(depth - 1, isMax);
+				GameField.makeMove(undo(allMoves.get(index).get(i)));
+				if (value < minValue) {
+					minValue = value;
+					if (System.currentTimeMillis() - tStart < timeLimit - 50)
+						finalMove = possibleMoveList.get(i);
+				}
+			}
+			return minValue;
+		}
+
+	}
+
+	private Move undo(Move move) {
+		return new Move(move.toX, move.toY, move.fromX, move.fromY);
+	}
+
+	/*public double minimax(int node, int depth, boolean maximizingPlayer, double alpha, double beta) {
+		double estimate = 0;
+		if (depth == 0) //|| isTerminating(node))
+			estimate = estimate();
 		if (maximizingPlayer) {
 			double v = Double.NEGATIVE_INFINITY;
-			for (int i = 0; i < 2; i++) {// for each child of node
+			for (int i = 0; i < possibleMoveList.size(); i++) {
 				v = max(v, minimax(node * 2 + i, depth - 1, false, alpha, beta));
 				alpha = max(alpha, v);
 				if (beta <= alpha)
 					break;
 			}
-			return v;
+			estimate = v;
 		} else {
 			double v = Double.POSITIVE_INFINITY;
-			for (int i = 0; i < 2; i++) {// for each child of node
+			for (int i = 0; i < 2; i++) {
 				v = min(v, minimax(node * 2 + i, depth - 1, true, alpha, beta));
 				beta = min(beta, v);
 				if (beta <= alpha)
 					break;
 			}
-			return v;
+			estimate = v;
 		}
+		return estimate;
+	
+	}*/
 
-	}
-
-	// Einstiegspunkt
-	public Move generateMoves() {
-		//if (player != 0)
-		//	GameField.turnField(player);
+	/*private double generateMove() {
 		if (player == 0)
 			for (Iterator<Integer> it = GameField.getPlayer0Chips().iterator(); it.hasNext();) {
 				int i = it.next();
@@ -70,25 +167,50 @@ public class MinMax {
 		System.out.println(possibleMoveList.size());
 		System.out.println(moveRatingList.size());
 		return getBestMove();
+	}*/
+
+	// Einstiegspunkt
+	public int generateMoves() {
+		if (player == 0)
+			for (Iterator<Integer> it = GameField.getPlayer0Chips().iterator(); it.hasNext();) {
+				int i = it.next();
+				generateSingleMove(i);
+			}
+		else if (player == 1)
+			for (Iterator<Integer> it = GameField.getPlayer1Chips().iterator(); it.hasNext();) {
+				int i = it.next();
+				generateSingleMove(i);
+			}
+		else
+			for (Iterator<Integer> it = GameField.getPlayer2Chips().iterator(); it.hasNext();) {
+				int i = it.next();
+				generateSingleMove(i);
+			}
+		return getBestMoveIndex();
 
 	}
 
-	private Move getBestMove() {
+	private int getBestMoveIndex() {
 		int rating = -1;
-		Move m = null;
+		//Move m = null;
+		int moveIndex = 0;
 		for (int i = 0; i < possibleMoveList.size(); i++) {
 			if (moveRatingList.get(i) > rating) {
 				rating = moveRatingList.get(i);
-				m = possibleMoveList.get(i);
+				//m = possibleMoveList.get(i);
+				score += rating;
+				moveIndex = i;
 			}
 		}
 		if (rating == 0) {
 			Random rn = new Random();
 
 			int randomNum = rn.nextInt((possibleMoveList.size() - 1) - 0 + 1) + 0;
-			m = possibleMoveList.get(randomNum);
+			//m = possibleMoveList.get(randomNum);
+			score += rating;
+			moveIndex = randomNum;
 		}
-		return m;
+		return moveIndex;
 	}
 
 	private void generateSingleMove(int chipPosition) {
@@ -236,24 +358,13 @@ public class MinMax {
 		    return maxWert;
 		 }*/
 
-	private boolean isTerminating(int node) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	private double max(double alpha, double v) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private double min(double beta, double v) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public void resetMovelist() {
 		possibleMoveList.clear();
 		moveRatingList.clear();
+	}
+
+	public Move getMove() {
+		return finalMove;
 	}
 
 }

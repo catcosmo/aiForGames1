@@ -33,7 +33,7 @@ public class Playa {
 	public static void main(String[] args) {
 		GameField.initializeBoard();
 		int player = network.getMyPlayerNumber();
-		MinMax minMax = new MinMax(player);
+		MinMax minMax = new MinMax(player, network.getExpectedNetworkLatencyInMilliseconds());
 		for (;;) {
 			Move receiveMove;
 
@@ -43,7 +43,8 @@ public class Playa {
 				GameField.makeMove(receiveMove);
 
 			}
-			Move m = minMax.generateMoves();
+			minMax.minimax(2, true);
+			Move m = minMax.getMove();
 			System.out.println(player + ": " + m);
 			minMax.resetMovelist();
 			//GameField.makeMove(m, player, -1);
