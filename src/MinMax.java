@@ -12,6 +12,7 @@ public class MinMax {
 	private final long tStart;
 
 	private int player;
+	private int fixedPlayer;
 	private int MAX = 1000;
 	private int MIN = -1000;
 	private int score;
@@ -28,6 +29,7 @@ public class MinMax {
 
 	public MinMax(int i, long theTimeLimit) {
 		this.player = i;
+		fixedPlayer = i;
 		tStart = System.currentTimeMillis();
 		timeLimit = theTimeLimit;
 	}
@@ -58,8 +60,12 @@ public class MinMax {
 
 	public double minimax(int depth, boolean maximizingPlayer) {
 		int estimate = 0;
-		if (depth == 0) {// || noMovesLeft {
-			finalMove = allMoves.get(allMoves.size() - 1).get(getBestMoveIndex());
+		System.out.println(System.currentTimeMillis() - tStart);
+		System.out.println(timeLimit);
+
+		if (depth == 0) {// || noMovesLeft 
+			//finalMove = allMoves.get(allMoves.size() - 1).get(getBestMoveIndex());
+			player = fixedPlayer;
 			return (allRatings.get(allRatings.size() - 1).get(getBestMoveIndex()));
 		}
 		if (maximizingPlayer) {
@@ -83,8 +89,8 @@ public class MinMax {
 				GameField.makeMove(undo(allMoves.get(index).get(i)));
 				if (value > maxValue) {
 					maxValue = value;
-					if (System.currentTimeMillis() - tStart < timeLimit - 50)
-						finalMove = possibleMoveList.get(i);
+					//if (System.currentTimeMillis() - tStart < timeLimit - 50)
+					finalMove = allMoves.get(0).get(i);
 				}
 			}
 			return maxValue;
@@ -110,8 +116,6 @@ public class MinMax {
 				GameField.makeMove(undo(allMoves.get(index).get(i)));
 				if (value < minValue) {
 					minValue = value;
-					if (System.currentTimeMillis() - tStart < timeLimit - 50)
-						finalMove = possibleMoveList.get(i);
 				}
 			}
 			return minValue;
@@ -363,6 +367,11 @@ public class MinMax {
 	public void resetMovelist() {
 		possibleMoveList.clear();
 		moveRatingList.clear();
+	}
+
+	public void resetAllLists() {
+		allMoves.clear();
+		allRatings.clear();
 	}
 
 	public Move getMove() {

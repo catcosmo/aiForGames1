@@ -43,10 +43,11 @@ public class Playa {
 				GameField.makeMove(receiveMove);
 
 			}
-			minMax.minimax(2, true);
+			System.out.println(player);
+			minMax.minimax(3, true);
 			Move m = minMax.getMove();
 			System.out.println(player + ": " + m);
-			minMax.resetMovelist();
+			minMax.resetAllLists();
 			//GameField.makeMove(m, player, -1);
 			// berechne tollen Zug
 			network.sendMove(m);
